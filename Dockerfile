@@ -172,6 +172,25 @@ ENV PGDATA /var/lib/postgresql/data
 # este 1777 será substituído por 0700 em tempo de execução (permite valores semi-arbitrários de "--user")
 RUN install --verbose --directory --owner postgres --group postgres --mode 1777 "$PGDATA"
 VOLUME /var/lib/postgresql/data
+# --- Início das configurações adicionadas ---
+
+# Definir a variável de ambiente do fuso horário
+ENV TZ=America/Sao_Paulo
+
+# Instalar pacotes adicionais e configurar o fuso horário
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    tzdata \
+    postgresql-17-postgis-3 \
+    postgresql-17-postgis-3-scripts \
+    ; \
+    ln -sf /usr/share/zoneinfo/$TZ /etc/localtime; \
+    echo "$TZ" > /etc/timezone; \
+    dpkg-reconfigure -f noninteractive tzdata; \
+    rm -rf /var/lib/apt/lists/*
+
+# --- Fim das configurações adicionadas ---
 
 COPY docker-entrypoint.sh docker-ensure-initdb.sh /usr/local/bin/
 RUN ln -sT docker-ensure-initdb.sh /usr/local/bin/docker-enforce-initdb.sh

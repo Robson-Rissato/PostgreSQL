@@ -184,6 +184,8 @@ RUN set -eux; \
     tzdata \
     postgresql-17-postgis-3 \
     postgresql-17-postgis-3-scripts \
+    mc \
+    net-tools \
     ; \
     ln -sf /usr/share/zoneinfo/$TZ /etc/localtime; \
     echo "$TZ" > /etc/timezone; \
